@@ -49,12 +49,16 @@ A partir del modelo se obtienen los valores ajustados ($\hat{Y_i}$), que son las
 $$\hat{e_i}=Y_i-\hat{Y_i}$$
 El análisis de los residuos es importante para evaluar si el modelo lineal es adecuado: si los residuos se distribuyen de forma aleatoria alrededor de cero, sin ningún patrón visible, el modelo lineal es el apropiado. Pero si esta muestra una tendencia como una curva, esto indica que la relación entre estas variables no es realmente lineal y que el modelo se debería ajustar de otra manera.
 ### Método de mínimos cuadrados
-Este es el criterio más utilizado para calcular el valor de $b_0$ y $b_1$, con el objetivo de que se encuentre los valores que minimicen la suma de residuos al cuadrado (RSS):
+Este es el criterio más utilizado para calcular el valor de $b_0$ y $b_1$. Las ecuaciones que se utilizan para hallar estos valores son:
+$$b_1=\frac{\sum(x_i-\bar{x})(y_i-\bar{y})}{\sum(x_i-\bar{x})^2}$$
+$$b_0=\bar{y}-b_1\bar{x}$$
+
+Este se realiza con el objetivo de que se encuentre los valores que minimicen la suma de residuos al cuadrado (RSS):
 $$RSS=\sum_{i=1}^{n} (\hat{e_i})^2$$
 $$RSS=\sum_{i=1}^{n} (Y_i-\hat{Y}_i)^2$$
 $$RSS=\sum_{i=1}^{n} (Y_i-\hat{b}_0-\hat{b}_iXi)^2$$
 Aquí se eleva cada residuo al cuadrado, en lugar de utilizar su valor absoluto, por dos razones principales:
-- Evista que residuos positivos y negativos se cancelen entre sí al sumarlos.
+- Evita que residuos positivos y negativos se cancelen entre sí al sumarlos.
 - Permite obtener una función diferenciable.
 
 Esta última razón hace posible que se pueda obtener analíticamente los valores que minimizan el error total.
@@ -73,36 +77,39 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
-data = pd.DataFrame({
-    'Exposure': [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
-    'PEFR': [450, 430, 420, 400, 390, 370, 360, 340, 320, 310, 300]
+# Exposición al polvo de algodon
+datos = pd.DataFrame({
+    'anios_exposicion': [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
+    'capacidad_pulmonar': [450, 430, 420, 400, 390, 370, 360, 340, 320, 310, 300]
 })
 
-predictors = ['Exposure']
-outcome = 'PEFR'
+predictor = ['anios_exposicion']
+respuesta = 'capacidad_pulmonar'
 
-model = LinearRegression()
-model.fit(data[predictors], data[outcome])
+modelo = LinearRegression()
 
-print(f'Intercepto (b0): {model.intercept_:.3f}')
-print(f'Coeficiente Exposure (b1): {model.coef_[0]:.3f}')
+modelo.fit(datos[predictor], datos[respuesta])
 
-fitted = model.predict(data[predictors])
-residuals = data[outcome] - fitted
+print(f'Intercepto (b0): {modelo.intercept_:.3f}')
+print(f'Coeficiente de años de exposición (b1): {modelo.coef_[0]:.3f}')
 
-rmse = np.sqrt(mean_squared_error(data[outcome], fitted))
-r2 = r2_score(data[outcome], fitted)
+valores_ajustados = modelo.predict(datos[predictor])
+
+residuos = datos[respuesta] - valores_ajustados
+
+rmse = np.sqrt(mean_squared_error(datos[respuesta], valores_ajustados))
+r2 = r2_score(datos[respuesta], valores_ajustados)
 
 print(f'RMSE: {rmse:.2f}')
 print(f'R²: {r2:.4f}')
 
 import matplotlib.pyplot as plt
 
-plt.scatter(data['Exposure'], data['PEFR'], color='steelblue', label='Datos observados')
-plt.plot(data['Exposure'], fitted, color='red', label='Línea de regresión')
-plt.xlabel('Exposición (años)')
-plt.ylabel('PEFR')
-plt.title('Regresión lineal simple: Exposición vs. PEFR')
+plt.scatter(datos['anios_exposicion'], datos['capacidad_pulmonar'], color='steelblue', label='Datos observados')
+plt.plot(datos['anios_exposicion'], valores_ajustados, color='red', label='Línea de regresión')
+plt.xlabel('Años de exposición')
+plt.ylabel('Capacidad pulmonar (PEFR)')
+plt.title('Regresión lineal simple: Exposición vs. Capacidad pulmonar')
 plt.legend()
 plt.show()
 ```
@@ -133,6 +140,9 @@ La validación cruzada amplía la idea de una muestra de reserva “holdout samp
 5. Repetir los pasos 2 y 3.
 6. Repetir el proceso hasta que cada registro haya formado parte de la muestra de reserva.
 7. Calcular el promedio o combinar de otro modo las métricas de evaluación del modelo.
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Esquema_castell%C3%A0.jpg?utm_source=es.wikipedia.org&utm_campaign=index&utm_content=original" width="700">
+
 ### Selección de modelos y regresión por pasos
 En casos de que se cuente con muchas variables candidatas, no es necesario incluir todas para crear el mejor modelo. Bruce et al. (2020) explica que es preferible modelos más simples cunado el ajuste es comparable. Para eso existen métricas como el AIC, este penaliza la cantidad de variables incluidas.
 
