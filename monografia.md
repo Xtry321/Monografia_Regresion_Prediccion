@@ -3,7 +3,9 @@
 - Araujo Champi José Eduardo
 - Melgarejo Guzmán Renzo Gustavo
 # Resumen
+La regresión es una herramienta central de la estadística y la ciencia de datos para modelar la relación entre una variable de interés y uno o más predictores, tanto para explicar como para predecir. Esta monografía compila sus principales conceptos con ejemplos en Python: la regresión lineal simple y múltiple, la evaluación de modelos (RMSE, RSE, R², validación cruzada, AIC), la predicción con intervalos de confianza y de predicción, el tratamiento de variables categóricas, la interpretación de coeficientes frente a la multicolinealidad y las variables de confusión, los diagnósticos de residuos y las alternativas no lineales (polinomios, splines y GAM). Se concluye que la regresión permite construir modelos predictivos fundamentados, siempre que se evalúen, diagnostiquen e interpreten con rigor.
 
+**Palabras clave:** regresión lineal, predicción, mínimos cuadrados, validación cruzada, variables dummy, diagnóstico de modelos, splines.
 # Indice
 - [Resumen](#resumen)
 - [Introducción](#introducción)
